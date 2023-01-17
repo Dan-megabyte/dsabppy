@@ -54,6 +54,8 @@ input = base64.decodebytes(input)
 
 input = zlib.decompress(input, -15)
 
+print(input)
+
 output = decodeBytes(input)
 
 print(output)
