@@ -3,6 +3,7 @@ import zlib
 import codecs
 
 def decodeBytes(bytes:bytes):
+    begin = bytes
     bytes = bytes[1:]
     result = []
     while len(bytes) > 0:
@@ -35,10 +36,13 @@ def decodeBytes(bytes:bytes):
                 result.append(None)
             bytes = bytes[1:]
         elif bytes[0] == 0x90:
-            result.append(decodeBytes(bytes[:bytes.index(145)+1]))
-            bytes = bytes[bytes.index(145)+1:]
+            decodedbytes = decodeBytes(bytes)
+            result.append(decodedbytes[0])
+            bytes = bytes[decodedbytes[1]:]
         elif bytes[0] == 0x91:
-            return result
+            bytes = bytes[1:]
+            print(str(begin)+" -> "+str(result))
+            return (result, (len(begin)-len(bytes)))
         elif bytes[0] <= 0x93:
             raise NotImplementedError ("Can't decode maps yet")
         elif bytes[0] <= 0x96:
@@ -46,7 +50,7 @@ def decodeBytes(bytes:bytes):
         
 
 
-input = "m8DAzDxhAgMDU8ML9olAmhFKM4DoiRMB"
+input = "m8DAzDxhAgMDQ8ML9olAmhFKM4HoiRMB"
 
 input = input.encode("ascii")
 
@@ -56,6 +60,6 @@ input = zlib.decompress(input, -15)
 
 print(input)
 
-output = decodeBytes(input)
+output = decodeBytes(input)[0]
 
 print(output)
