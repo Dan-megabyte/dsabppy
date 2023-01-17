@@ -26,7 +26,18 @@ def decodeBytes(bytes:bytes):
         elif bytes[0] <= 0x89:
             raise NotImplementedError ("Can't decode float yet")
         elif bytes[0] <= 0x8C:
-            raise NotImplementedError ("Can't decode string yet")
+            if bytes[0] == 0x8a:
+                length = bytes[1]*16**0
+                result.append(bytes[2:(length+2)].decode('utf8'))
+                bytes = bytes[length+2:]
+            if bytes[0] == 0x8b:
+                length = bytes[1]*16**1+bytes[2]*16**0
+                result.append(bytes[3:(length+3)].decode('utf8'))
+                bytes = bytes[length+3:]
+            if bytes[0] == 0x8c:
+                length = bytes[1]*16**3+bytes[2]*16**2+bytes[3]*16**1+bytes[4]*16**0
+                result.append(bytes[5:(length+5)].decode('utf8'))
+                bytes = bytes[length+5:]
         elif bytes[0] <= 0x8F:
             if bytes[0] == 0x8D:
                 result.append(True)
@@ -41,16 +52,25 @@ def decodeBytes(bytes:bytes):
             bytes = bytes[decodedbytes[1]:]
         elif bytes[0] == 0x91:
             bytes = bytes[1:]
-            print(str(begin)+" -> "+str(result))
             return (result, (len(begin)-len(bytes)))
         elif bytes[0] <= 0x93:
             raise NotImplementedError ("Can't decode maps yet")
         elif bytes[0] <= 0x96:
-            raise NotImplementedError ("Can't decode bytes yet")
+            if bytes[0] == 0x94:
+                result.append(bytes[1:2])
+                bytes = bytes[2:]
+            elif bytes[0] == 0x95:
+                result.append(bytes[1:3])
+                bytes = bytes[3:]
+            elif bytes[0] == 0x96:
+                result.append(bytes[1:5])
+                bytes = bytes[5:]
+        else:
+            raise NotImplementedError ("Can't decode byte "+str(bytes[0]))
         
 
 
-input = "m8DAzDxhAgMDQ8ML9olAmhFKM4HoiRMB"
+input = "LYlBCoAgFAXfp5YJLTpS95AoDcESzAO0diH/Q8dtkVGrGWYYRMx0jQxkNYfdulX7MC0mgpuW+qEUyco6n0zU3wdDcvcnl8x21AKIyIvzrvIA"
 
 input = input.encode("ascii")
 
