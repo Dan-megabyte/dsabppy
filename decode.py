@@ -70,7 +70,7 @@ def decodeBytes(bytes:bytes):
         
 
 
-input = "LYlBCoAgFAXfp5YJLTpS95AoDcESzAO0diH/Q8dtkVGrGWYYRMx0jQxkNYfdulX7MC0mgpuW+qEUyco6n0zU3wdDcvcnl8x21AKIyIvzrvIA"
+input = "LYlBCoAgFAXfp5YJLTpS95AoDcESzAO0For/oeO2yKjVDDMMIma6egayGsNq3ax9GCYTwVVNbXeckpV1Ppmovw+G5OZPLpllKwUQkRf7XeQB"
 
 input = input.encode("ascii")
 
