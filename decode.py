@@ -86,3 +86,10 @@ print(input)
 output = decodeBytes(input)[0]
 
 print(output)
+
+for i in range(len(output[3])):
+    command = output[3][i]
+    if command[0] == 1:
+        output[3][i][1] = decodeBytes(command[1])[0]
+
+print(output)
