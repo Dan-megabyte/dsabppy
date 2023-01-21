@@ -1,6 +1,7 @@
 import base64
 import zlib
 import codecs
+import struct
 
 def decodeBytes(bytes:bytes):
     begin = bytes
@@ -22,9 +23,25 @@ def decodeBytes(bytes:bytes):
                 )], 'hex'), 16))
             bytes = bytes[(bytes[0]-126):]
         elif bytes[0] <= 0x87:
-            raise NotImplementedError ("Can't decode signed int yet")
+            if bytes[0] == 0x84:
+                result.append(struct.unpack('h', bytes[1:3])[0])
+                bytes = bytes[3:]
+            if bytes[0] == 0x85:
+                result.append(struct.unpack('i', bytes[1:5])[0])
+                bytes = bytes[5:]
+            if bytes[0] == 0x86:
+                result.append(struct.unpack('l', bytes[1:9])[0])
+                bytes = bytes[9:]
+            if bytes[0] == 0x87:
+                result.append(struct.unpack('q', bytes[1:17])[0])
+                bytes = bytes[17:]
         elif bytes[0] <= 0x89:
-            raise NotImplementedError ("Can't decode float yet")
+            if bytes[0] == 0x88:
+                result.append(struct.unpack('f', bytes[1:5])[0])
+                bytes = bytes[5:]
+            if bytes[0] == 0x89:
+                result.append(struct.unpack('d', bytes[1:9])[0])
+                bytes = bytes[8:]
         elif bytes[0] <= 0x8C:
             if bytes[0] == 0x8a:
                 length = bytes[1]*16**0
@@ -70,7 +87,7 @@ def decodeBytes(bytes:bytes):
         
 
 
-input = "LYlBCoAgFAXfp5YJLTpS95AoDcESzAO0For/oeO2yKjVDDMMIma6egayGsNq3ax9GCYTwVVNbXeckpV1Ppmovw+G5OZPLpllKwUQkRf7XeQB"
+input = "hdE7CsJAEAbgWeMjPqvgPWQVxM7UnsAmhWRNwBdJbATBwiKkCLtgk/RexFqP4AFsPYFZSZndaXf5P/6Z4dAlnJPblAMk/dV+x/y1cziGnhtA8RRT+rGtNGZsMBdJj/mbyA0cP3K3ofwGIQSHNly+QmPk2Rk1CGK8nok0AEy1USuNcbUx+3cYqvNQ5ifV+atXAJQaaqCFAAsMMNAt3OUW8oyojXppjBQlllZqKsMNpAClb/QMpv4MxRAPW9ehiWzxhN2xIwEhfg=="
 
 input = input.encode("ascii")
 
