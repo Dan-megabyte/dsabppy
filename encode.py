@@ -47,7 +47,19 @@ def encodeBytes(datalist:list) -> bytes:
                 else:
                     raise OverflowError ("Negative Signed Int: "+int(data)+" too big to represent (smaller than 0x7FFFFFFFFF)")
         elif type(data) == str:
-            raise NotImplementedError ("String byte encoding isn't implemented yet")
+            length = len(data)
+            if length <= 0xFF:
+                output += b'\x8a'
+                output += length.to_bytes(1, "little")
+            elif length <= 0xFFFF:
+                output += b'\x8b'
+                output += length.to_bytes(2, "little")
+            elif length <= 0xFFFFFFFF:
+                output += b'\x8c'
+                output += length.to_bytes(4, "little")
+            else:
+                raise OverflowError ("String ["+data+"] too long to represent (len>0xFFFFFFFF)")
+            output += data.encode('utf8')
         elif type(data) == list:
             output += encodeBytes(data)
         elif type(data) == bool:
@@ -61,7 +73,7 @@ def encodeBytes(datalist:list) -> bytes:
             raise NotImplementedError (str(type(data))+" byte encoding isn't implemented yet")
     return output + b'\x91'
 
-inputList = [0, 3, 3, [[0, 0, 0, 232, 7], [0, 0, 1, 232, 7], [0, 0, 2, 232, 7]]]
+inputList = [0, 11, 1, [[1, [0, 0, 'config_pusher', 0, [0, 0, 116.5999984741211, 20, False, 8.899999618530273], 'filter_items', 0, [0, 0, 0]]], [0, 9, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 63.400001525878906, 20, False, 8.899999618530273], 'filter_items', 0, [0, 0, 0]]], [0, 1, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 69.4000015258789, 20, False, 8.5], 'filter_items', 0, [0, 0, 0]]], [0, 2, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 58, 20, False, 9.399999618530273], 'filter_items', 0, [0, 0, 0]]], [0, 0, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 5224, False, 8.199999809265137], 'filter_items', 0, [0, 0, 0]]], [0, 7, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 5196, False, 8.199999809265137], 'filter_items', 0, [0, 0, 0]]], [0, 3, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 82.9000015258789, 20, False, 8.100000381469727], 'filter_items', 0, [0, 0, 0]]], [0, 4, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 5210, False, 8], 'filter_items', 0, [0, 0, 0]]], [0, 5, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 110.5999984741211, 20, False, 8.5], 'filter_items', 0, [0, 0, 0]]], [0, 8, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 97.4000015258789, 20, False, 8], 'filter_items', 0, [0, 0, 0]]], [0, 6, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 5242, False, 9.399999618530273], 'filter_items', 0, [0, 0, 0]]], [0, 10, 0, 242]]]
 
 inputbytes = encodeBytes(inputList)
 
