@@ -62,6 +62,9 @@ def encodeBytes(datalist:list) -> bytes:
             output += data.encode('utf8')
         elif type(data) == list:
             output += encodeBytes(data)
+        elif type(data) == float:
+            output += b'\x89'
+            output += struct.pack("d", data)
         elif type(data) == bool:
             if data == True:
                 output += b'\x8D'
