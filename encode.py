@@ -1,6 +1,7 @@
 import base64
 import zlib
 import codecs
+import struct
 
 inputbytes = b'\x90\x00\x03\x03\x90\x90\x00\x00\x00\x80\xe8\x07\x91\x90\x00\x00\x01\x80\xe8\x07\x91\x90\x00\x00\x02\x80\xe8\x07\x91\x91\x91'
 
@@ -31,8 +32,20 @@ def encodeBytes(datalist:list) -> bytes:
                 if data >= -64:
                     data = data * (-1) + 0x3f
                     output += data.to_bytes(1, "little")
+                elif data >= -0x7FFF:
+                    output += b'\x84'
+                    output += struct.pack("h", data)
+                elif data >= -0x7FFFFF:
+                    output += b'\x85'
+                    output += struct.pack("i", data)
+                elif data >= -0x7FFFFFFF:
+                    output += b'\x86'
+                    output += struct.pack("l", data)
+                elif data >= -0x7FFFFFFFFF:
+                    output += b'\x87'
+                    output += struct.pack("q", data)
                 else:
-                    raise NotImplementedError ("Negative Numbers smaller than -63 aren't implemented yet")
+                    raise OverflowError ("Negative Signed Int: "+int(data)+" too big to represent (smaller than 0x7FFFFFFFFF)")
         elif type(data) == str:
             raise NotImplementedError ("String byte encoding isn't implemented yet")
         elif type(data) == list:
