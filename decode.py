@@ -29,11 +29,11 @@ def decodeBytes(bytes:bytes):
                 result.append(struct.unpack('i', bytes[1:5])[0])
                 bytes = bytes[5:]
             if bytes[0] == 0x86:
-                result.append(struct.unpack('l', bytes[1:9])[0])
-                bytes = bytes[9:]
+                result.append(struct.unpack('l', bytes[1:7])[0])
+                bytes = bytes[7:]
             if bytes[0] == 0x87:
-                result.append(struct.unpack('q', bytes[1:17])[0])
-                bytes = bytes[17:]
+                result.append(struct.unpack('q', bytes[1:9])[0])
+                bytes = bytes[9:]
         elif bytes[0] <= 0x89:
             if bytes[0] == 0x88:
                 result.append(struct.unpack('f', bytes[1:5])[0])
