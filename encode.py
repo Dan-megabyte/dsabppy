@@ -84,6 +84,6 @@ output = zlib.compress(inputbytes)[2:-4]
 
 output = base64.encodebytes(output)
 
-output = output.decode('ascii')
+output = output.decode('ascii').replace("\n", "")
 
 print(output)
