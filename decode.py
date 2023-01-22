@@ -15,13 +15,12 @@ def decodeBytes(bytes:bytes):
             result.append(bytes[0] - 128)
             bytes = bytes[1:]
         elif bytes[0] <= 0x83:
+            length = bytes[0]-0x7E
             result.append(
                 int(
-                codecs.encode(
-                bytes[1:(
-                bytes[0]-126
-                )], 'hex'), 16))
-            bytes = bytes[(bytes[0]-126):]
+                codecs.encode(bytes[1:(length)], 'hex'),
+                16,))
+            bytes = bytes[length:]
         elif bytes[0] <= 0x87:
             if bytes[0] == 0x84:
                 result.append(struct.unpack('h', bytes[1:3])[0])
