@@ -40,7 +40,7 @@ def decodeBytes(bytes:bytes):
                 bytes = bytes[5:]
             if bytes[0] == 0x89:
                 result.append(struct.unpack('d', bytes[1:9])[0])
-                bytes = bytes[8:]
+                bytes = bytes[9:]
         elif bytes[0] <= 0x8C:
             if bytes[0] == 0x8a:
                 length = bytes[1]*16**0
@@ -89,7 +89,7 @@ def decodeBytes(bytes:bytes):
         
 
 
-input = "hdE7CsJAEAbgWeMjPqvgPWQVxM7UnsAmhWRNwBdJbATBwiKkCLtgk/RexFqP4AFsPYFZSZndaXf5P/6Z4dAlnJPblAMk/dV+x/y1cziGnhtA8RRT+rGtNGZsMBdJj/mbyA0cP3K3ofwGIQSHNly+QmPk2Rk1CGK8nok0AEy1USuNcbUx+3cYqvNQ5ifV+atXAJQaaqCFAAsMMNAt3OUW8oyojXppjBQlllZqKsMNpAClb/QMpv4MxRAPW9ehiWzxhN2xIwEhfg=="
+input = "m8DAzThhAuMUhwkMDF28yfl5aZnp8QWlxRmpRQxAoU4GBoaENLVYB5E+EPPAmTOKDhO7eNIyc0pSi+IzS1Jzi0HKGCZOnDiBgZOh4dNE/GY5GG/2J8osRsJmLZgZGQg1CwjwmMUENcsCu1lWcPco4TaDAWqGJXYzGjMghiSkpSngNoSdgCE+xBjCTEzI7AyBhoyDsTEes1igZhnicFCUSB8HTs2shB2SkLYsmqgo4sAfRdDojnDA5x42AqFbRUw8c4EMmTgRAA=="
 
 input = input.encode("ascii")
 
