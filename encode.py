@@ -113,7 +113,7 @@ def encodeList(inputList:list, /, configMessageEnabled:bool=False) -> str:
     #print(inputList)
 
     inputbytes = _encodeBytes(inputList)
-    print(EscapeAll(inputbytes))
+    print(inputbytes)
     compressedBytes = zlib.compress(inputbytes)[2:-4]
 
     encodedBytes = base64.encodebytes(compressedBytes)
