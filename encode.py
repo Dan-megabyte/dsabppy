@@ -2,7 +2,7 @@ import base64
 import zlib
 import struct
 
-def _encodeBytes(datalist:list) -> bytes:
+def _encodeBytes(datalist:list, /, float_precision:str="single") -> bytes:
     output = b'\x90'
     for data in datalist:
         if type(data) == int:
@@ -31,16 +31,16 @@ def _encodeBytes(datalist:list) -> bytes:
                     output += data.to_bytes(1, "little")
                 elif data >= -0x7FFF:
                     output += b'\x84'
-                    output += struct.pack("h", data)
+                    output += struct.pack("<h", data)
                 elif data >= -0x7FFFFF:
                     output += b'\x85'
-                    output += struct.pack("i", data)
+                    output += struct.pack("<i", data)
                 elif data >= -0x7FFFFFFF:
                     output += b'\x86'
-                    output += struct.pack("l", data)
+                    output += struct.pack("<l", data)
                 elif data >= -0x7FFFFFFFFF:
                     output += b'\x87'
-                    output += struct.pack("q", data)
+                    output += struct.pack("<q", data)
                 else:
                     raise OverflowError ("Negative Signed Int: "+int(data)+" too big to represent (smaller than 0x7FFFFFFFFF)")
         elif type(data) == str:
@@ -60,8 +60,14 @@ def _encodeBytes(datalist:list) -> bytes:
         elif type(data) == list:
             output += _encodeBytes(data)
         elif type(data) == float:
-            output += b'\x89'
-            output += struct.pack("d", data)
+            if float_precision == "single":
+                output += b'\x88'
+                output += struct.pack("<f", data)
+            elif float_precision == "double":
+                output += b'\x89'
+                output += struct.pack("<d", data)
+            else:
+                raise RuntimeError ("float_precision must be 'single' or 'double'")
         elif type(data) == bytes:
             length = len(data)
             if length <= 0xFF:
@@ -107,7 +113,7 @@ def encodeList(inputList:list, /, configMessageEnabled:bool=False) -> str:
     #print(inputList)
 
     inputbytes = _encodeBytes(inputList)
-    #print(inputbytes)
+    print(EscapeAll(inputbytes))
     compressedBytes = zlib.compress(inputbytes)[2:-4]
 
     encodedBytes = base64.encodebytes(compressedBytes)
