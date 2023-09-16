@@ -89,7 +89,7 @@ def _encodeBytes(datalist:list, /, float_precision:str="single") -> bytes:
                 output += b'\x8E'
         elif data == None:
             output += b'\x8F'
-        elif type(data) == map:
+        elif type(data) == dict:
             output += b'\x92'
             temp = []
             for key in data:
