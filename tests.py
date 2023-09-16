@@ -1,8 +1,7 @@
 import base64
 import zlib
 
-from decode import decodeString
-from encode import encodeList
+from dsabppy import encodeList, decodeString
 
 passed = True
 
@@ -30,8 +29,6 @@ for test in tests:
             passed = False
             print("failed")
     elif type(tested) == str:
-        print("Testing:")
-        print(tested)
         print("decoding...")
         decoded =decodeString(tested)
         print(decoded)
