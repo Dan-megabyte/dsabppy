@@ -67,6 +67,8 @@ def _decodeBytes(bytes:bytes) -> list:
             return (result, (len(begin)-len(bytes)))
         elif bytes[0] == 0x92: #start of a map
             decodedbytes = _decodeBytes(bytes)
+            bytes = bytes[decodedbytes[1]:]
+            decodedbytes = decodedbytes[0]
             if len(decodedbytes) % 2 == 1:
                 raise ValueError ("Map {} has an odd number of objects".format(decodedbytes))
             obj_map = {}
