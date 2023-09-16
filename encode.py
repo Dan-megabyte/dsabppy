@@ -1,9 +1,8 @@
 import base64
 import zlib
-import codecs
 import struct
 
-def encodeBytes(datalist:list) -> bytes:
+def _encodeBytes(datalist:list) -> bytes:
     output = b'\x90'
     for data in datalist:
         if type(data) == int:
@@ -59,7 +58,7 @@ def encodeBytes(datalist:list) -> bytes:
                 raise OverflowError ("String ["+data+"] too long to represent (length>0xFFFFFFFF)")
             output += data.encode('utf8')
         elif type(data) == list:
-            output += encodeBytes(data)
+            output += _encodeBytes(data)
         elif type(data) == float:
             output += b'\x89'
             output += struct.pack("d", data)
@@ -84,26 +83,36 @@ def encodeBytes(datalist:list) -> bytes:
                 output += b'\x8E'
         elif data == None:
             output += b'\x8F'
+        elif type(data) == map:
+            output += b'\x92'
+            temp = []
+            for key in data:
+                temp.append(key)
+                temp.append(data[key])
+            output += _encodeBytes(temp)[1:-1]
+            del temp
+            output += b'\x93'
         else:
             raise NotImplementedError (str(type(data))+" byte encoding isn't implemented yet")
     return output + b'\x91'
 
-inputList = [0, 11, 1, [[1, [0, 0, 'config_pusher', 0, [0, 0, 116.5999984741211, 20, False, 8.899999618530273], 'filter_items', 0, [0, 0, 0]]], [0, 9, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 63.400001525878906, 20, False, 8.899999618530273], 'filter_items', 0, [0, 0, 0]]], [0, 1, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 69.4000015258789, 20, False, 8.5], 'filter_items', 0, [0, 0, 0]]], [0, 2, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 58, 20, False, 9.399999618530273], 'filter_items', 0, [0, 0, 0]]], [0, 0, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 5224, False, 8.199999809265137], 'filter_items', 0, [0, 0, 0]]], [0, 7, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 5196, False, 8.199999809265137], 'filter_items', 0, [0, 0, 0]]], [0, 3, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 82.9000015258789, 20, False, 8.100000381469727], 'filter_items', 0, [0, 0, 0]]], [0, 4, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 5210, False, 8], 'filter_items', 0, [0, 0, 0]]], [0, 5, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 110.5999984741211, 20, False, 8.5], 'filter_items', 0, [0, 0, 0]]], [0, 8, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 97.4000015258789, 20, False, 8], 'filter_items', 0, [0, 0, 0]]], [0, 6, 0, 242], [1, [0, 0, 'config_pusher', 0, [0, 0, 5242, False, 9.399999618530273], 'filter_items', 0, [0, 0, 0]]], [0, 10, 0, 242]]]
+def encodeList(inputList:list, /, configMessageEnabled:bool=False) -> str:
+    if configMessageEnabled:
+        for i in range(len(inputList[3])):
+            command = inputList[3][i]
+            if command[0] == 1:
+                commandbytes = _encodeBytes(command[1])#[1:-1]
+                inputList[3][i][1] = commandbytes
 
-for i in range(len(inputList[3])):
-    command = inputList[3][i]
-    if command[0] == 1:
-        commandbytes = encodeBytes(command[1])#[1:-1]
-        inputList[3][i][1] = commandbytes
+    #print(inputList)
 
-print(inputList)
+    inputbytes = _encodeBytes(inputList)
+    #print(inputbytes)
+    compressedBytes = zlib.compress(inputbytes)[2:-4]
 
-inputbytes = encodeBytes(inputList)
+    encodedBytes = base64.encodebytes(compressedBytes)
 
-output = zlib.compress(inputbytes)[2:-4]
+    output = encodedBytes.decode('ascii').replace("\n", "")
 
-output = base64.encodebytes(output)
-
-output = output.decode('ascii').replace("\n", "")
-
-print(output)
+    #print(output)
+    return output
