@@ -93,7 +93,7 @@ def _decodeBytes(bytes:bytes) -> list:
                 result.append(bytes[5:(length+5)])
                 bytes = bytes[length+5:]
         else:
-            raise NotImplementedError ("Can't decode byte "+str(bytes[0]))
+            raise ValueError ("Can't decode byte "+str(bytes[0]))
 
 def decodeString(inputString:str, /, configMessageEnabled:bool=False) -> list:
     '''
@@ -189,7 +189,7 @@ def _encodeBytes(datalist:list, /, float_precision:str="single") -> bytes:
                 output += b'\x96'
                 output += length.to_bytes(4, "little")
             else:
-                raise OverflowError ("Bytes "+data+" too long to be represented")
+                raise OverflowError ("Bytes "+str(data)+" too long to be represented")
             output += data
         elif type(data) == bool:
             if data == True:
