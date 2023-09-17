@@ -52,4 +52,22 @@ for test in tests:
             print("failed")
             print(test)
 
+# config tests...
+tested = tests["inputlist"]
+print("Testing:")
+print(tested)
+print("encoding...")
+encoded = encodeList(tested, configMessageEnabled=True)
+print(encoded)
+print("decoding...")
+test = decodeString(encoded, configMessageEnabled=True)
+print(test)
+if test == tested:
+    print("passed")
+else:
+    passed = False
+    print("failed")
+    #print(tested, test)
+
+
 print("ALL TESTS PASSED {}".format(passed))
