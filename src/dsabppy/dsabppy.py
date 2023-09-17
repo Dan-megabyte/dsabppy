@@ -1,6 +1,7 @@
 import base64
 import zlib
 import struct
+import copy
 
 def _decodeBytes(bytes:bytes) -> list:
     begin = bytes
@@ -212,6 +213,7 @@ def _encodeBytes(datalist:list, /, float_precision:str="single") -> bytes:
     return output + b'\x91'
 
 def encodeList(inputList:list, /, configMessageEnabled:bool=False, floatPrecision:str='single') -> str:
+    inputList = copy.deepcopy(inputList)
     '''
     Encodes a list <inputList> and returns a blueprint string
     '''
@@ -225,7 +227,7 @@ def encodeList(inputList:list, /, configMessageEnabled:bool=False, floatPrecisio
                 inputList[3][i][1] = commandbytes
 
     inputbytes = _encodeBytes(inputList, float_precision=floatPrecision)
-    #print(inputbytes)
+    del inputList
     compressedBytes = zlib.compress(inputbytes)[2:-4]
 
     encodedBytes = base64.encodebytes(compressedBytes)
