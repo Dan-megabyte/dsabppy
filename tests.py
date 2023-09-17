@@ -1,7 +1,7 @@
 import base64
 import zlib
 
-from dsabppy import encodeList, decodeString
+from src.dsabppy.dsabppy import encodeList, decodeString
 
 passed = True
 
